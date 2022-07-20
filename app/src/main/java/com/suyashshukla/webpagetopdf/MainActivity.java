@@ -15,28 +15,51 @@ import android.print.PrintJob;
 import android.print.PrintManager;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.material.navigation.NavigationView;
+
 public class MainActivity extends AppCompatActivity {
     WebView wb, print;
     Button btn;
-    public DrawerLayout drawerLayout;
-    public ActionBarDrawerToggle actionBarDrawerToggle;
+    public DrawerLayout drawerLayout,drawerLayout1;
+    NavigationView nview;
+    public ActionBarDrawerToggle actionBarDrawerToggle,actionBarDrawerToggle1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         wb = findViewById(R.id.file);
         btn = findViewById(R.id.ctpdf);
-        drawerLayout = findViewById(R.id.drawer);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close);
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.syncState();
+        nview=findViewById(R.id.nview);
+        openweb();
+      drawerLayout = findViewById(R.id.drawer);
+      this.drawerLayout1=drawerLayout;
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout1, R.string.nav_open, R.string.nav_close);
+        this.actionBarDrawerToggle1=actionBarDrawerToggle;
+        this.drawerLayout.addDrawerListener(actionBarDrawerToggle1);
+        this.actionBarDrawerToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        this.nview.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            public boolean onNavigationItemSelected( MenuItem item) {
+                switch(item.getItemId()) {
+                    case R.id.home:
+                        openweb();
+                        drawerLayout.closeDrawers();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+        });
+
+    }
+
+    private void openweb() {
         wb.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView v, String url) {
@@ -45,25 +68,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         wb.loadUrl("https://www.google.com/");
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (print != null) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        // Calling createWebPrintJob()
-                        PrintTheWebPage(print);
-                    }else {
-                        // Showing Toast message to user
-                        Toast.makeText(MainActivity.this, "Not available for device below Android LOLLIPOP", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    // Showing Toast message to user
-                    Toast.makeText(MainActivity.this, "WebPage not fully loaded", Toast.LENGTH_SHORT).show();
-                }
-            }
+        btn.setOnClickListener(view -> {
+            if (print != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
+                    PrintTheWebPage(print);
+                }else {
+
+                    Toast.makeText(MainActivity.this, "Not available for device below Android LOLLIPOP", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+
+                Toast.makeText(MainActivity.this, "WebPage not fully loaded", Toast.LENGTH_SHORT).show();
+            }
         });
     }
+
+
     @Override
             public boolean onOptionsItemSelected(@NonNull MenuItem Item) {
         if (actionBarDrawerToggle.onOptionsItemSelected(Item)) {
