@@ -1,7 +1,10 @@
 package com.suyashshukla.webpagetopdf;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Context;
 import android.os.Build;
@@ -11,6 +14,7 @@ import android.print.PrintDocumentAdapter;
 import android.print.PrintJob;
 import android.print.PrintManager;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -20,13 +24,19 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     WebView wb, print;
     Button btn;
-
+    public DrawerLayout drawerLayout;
+    public ActionBarDrawerToggle actionBarDrawerToggle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         wb = findViewById(R.id.file);
         btn = findViewById(R.id.ctpdf);
+        drawerLayout = findViewById(R.id.drawer);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close);
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         wb.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView v, String url) {
@@ -54,7 +64,13 @@ public class MainActivity extends AppCompatActivity {
 
         });
     }
-
+    @Override
+            public boolean onOptionsItemSelected(@NonNull MenuItem Item) {
+        if (actionBarDrawerToggle.onOptionsItemSelected(Item)) {
+            return true;
+        }
+    return super.onOptionsItemSelected(Item);
+    }
     PrintJob printJob;
     boolean printbtnpressed=false;
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -73,26 +89,26 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if (printJob != null && printbtnpressed) {
             if (printJob.isCompleted()) {
-                // Showing Toast Message
+
                 Toast.makeText(this, "Completed", Toast.LENGTH_SHORT).show();
             } else if (printJob.isStarted()) {
-                // Showing Toast Message
+
                 Toast.makeText(this, "process started", Toast.LENGTH_SHORT).show();
 
             } else if (printJob.isBlocked()) {
-                // Showing Toast Message
+
                 Toast.makeText(this, "isBlocked", Toast.LENGTH_SHORT).show();
 
             } else if (printJob.isCancelled()) {
-                // Showing Toast Message
+
                 Toast.makeText(this, "process cancelled", Toast.LENGTH_SHORT).show();
 
             } else if (printJob.isFailed()) {
-                // Showing Toast Message
+
                 Toast.makeText(this, "process failed", Toast.LENGTH_SHORT).show();
 
             } else if (printJob.isQueued()) {
-                // Showing Toast Message
+
                 Toast.makeText(this, "isQueued", Toast.LENGTH_SHORT).show();
 
             }
